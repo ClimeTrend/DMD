@@ -3,7 +3,7 @@ This is a repo for developing dynamic mode decomposition for noisy climate data.
 
 Dynamic mode decomposition is a plethora of data-driven physics-based machine learning techniques for uncovering coherent spatio-temporal structures in the data. 
 
-Here is an example of a fit to a synthetic data from a PDE. More details in `/Notebooks/Demo.ipynb':
+Here is an example of a fit to a synthetic data from a PDE. More details in `/Notebooks/Demo.ipynb`. On the left is ground truth, on the right is thd DMD prediction:
 
 ![Demo](https://github.com/ClimeTrend/DMD/assets/20075514/4caeea7d-8c33-4651-a994-af57484af050)
 
