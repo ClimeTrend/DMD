@@ -1,0 +1,48 @@
+
+# large data files. Note: small data files .dat and are pushed
+*.pkl
+*.np
+*.npy
+*.dat
+*.nc
+
+data/
+
+
+my_checkpoints
+wandb
+runs
+data
+runs*
+
+data/
+
+# Compiled python modules.
+*.pyc
+
+# Fenics logs
+jitfailure*
+
+.ipynb_checkpoints
+
+ssp_venv
+sspvenv
+
+# Byte-compiled
+_pycache__/
+.cache/
+.idea/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+.eggs/
+
+# PyPI distribution artifacts.
+build/
+dist/
+
+# Tests
+.pytest_cache/
+
+# Other
+*.DS_Store
