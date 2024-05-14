@@ -3,7 +3,13 @@ This is a repo for developing dynamic mode decomposition for noisy climate data.
 
 Dynamic mode decomposition is a plethora of data-driven physics-based machine learning techniques for uncovering coherent spatio-temporal structures in the data. 
 
-DMD does not really require batching the data in the deep-AI sense. 
+Here is an example of a fit to a synthetic data from a PDE. More details in `/Notebooks/Demo.ipynb`. On the left is ground truth, on the right is thd DMD prediction:
+
+![Demo](https://github.com/ClimeTrend/DMD/assets/20075514/4caeea7d-8c33-4651-a994-af57484af050)
+
+
+
+DMD does not really require batching the training data in the deep-AI sense. 
 
 Directory `/modules` contains `.py` dependencies. 
 
@@ -13,9 +19,7 @@ Directory `/data` contains small sparse data, used for testing.
 
 I (@pyatsysh) recommend to start by running `/notebooks/Demo.ipynb`. This notebook contains a minimal example of applying DMD to climate-like dataset. The actual data is generated from an advection-diffusion PDE.
 
-Due to (1) some known shortcomings of PyDMD package, and (2) specifics of climate data, I re-implemented some aspects (e.g., time-delay, DMD prediction, and some more). This one dependecy: `BOPDMD`. The main reason for re-implementing was Uncertainty Quanitification (UQ), which I found presently does not work as expected in PyDMD. 
-
-The following capabilities are so far implemented:
+The following capabilities are so far implemented (I've re-implemented some of those found in PyDMD):
 
 * Use boolean masks to select subsets of image. E.g., 
 * Window average of training data. E.g. take window-mean over T snapshots
