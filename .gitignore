@@ -1,6 +1,6 @@
 
 # large data files. Note: small data files .dat and are pushed
-*.pkl
+
 *.np
 *.npy
 *.dat
