@@ -3,7 +3,11 @@ This is a repo for developing dynamic mode decomposition for noisy climate data.
 
 Dynamic mode decomposition is a plethora of data-driven physics-based machine learning techniques for uncovering coherent spatio-temporal structures in the data. 
 
-DMD does not really require batching the data in the deep-AI sense. 
+![Demo](https://github.com/ClimeTrend/DMD/assets/20075514/ff0f6755-b21f-48ff-b2bb-a6293f9558bc)
+
+
+
+DMD does not really require batching the training data in the deep-AI sense. 
 
 Directory `/modules` contains `.py` dependencies. 
 
