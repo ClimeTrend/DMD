@@ -19,9 +19,7 @@ Directory `/data` contains small sparse data, used for testing.
 
 I (@pyatsysh) recommend to start by running `/notebooks/Demo.ipynb`. This notebook contains a minimal example of applying DMD to climate-like dataset. The actual data is generated from an advection-diffusion PDE.
 
-Due to (1) some known shortcomings of PyDMD package, and (2) specifics of climate data, I re-implemented some aspects (e.g., time-delay, DMD prediction, and some more). This one dependecy: `BOPDMD`. The main reason for re-implementing was Uncertainty Quanitification (UQ), which I found presently does not work as expected in PyDMD. 
-
-The following capabilities are so far implemented:
+The following capabilities are so far implemented (I've re-implemented some of those found in PyDMD):
 
 * Use boolean masks to select subsets of image. E.g., 
 * Window average of training data. E.g. take window-mean over T snapshots
