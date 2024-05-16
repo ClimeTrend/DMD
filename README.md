@@ -7,6 +7,17 @@ Here is an example of a fit to a synthetic data from a PDE. More details in `/No
 
 ![Demo](https://github.com/ClimeTrend/DMD/assets/20075514/4caeea7d-8c33-4651-a994-af57484af050)
 
+## Install
+
+To install the dependencies from the pyproject.toml file, run the following commands (assuming macOS) to create a virtual environment and install the package dependencies in editable mode:
+
+```bash
+git clone https://github.com/ClimeTrend/DMD.git
+python -m venv venv
+source venv/bin/activate
+pip install -e .
+```
+
 
 
 DMD does not really require batching the training data in the deep-AI sense. 
@@ -38,9 +49,10 @@ Thus, training data is a list of size `N_years`, where each element is `ndarray`
 
 
 # Short Term Plan:
-0. Add `requirements.txt`. At the moment, dependencies are self-evident: just run `/notebooks/Demo.ipynb`;
-1. Review current data model (list of ndarrays);
-2. Set up data pipeline. E.g., select one scalar field for now;
-2. Evaluation metrics - WeatherBench;
-3. Implement a climatology model as benchmark;
-4. Uncertainty Quantification - DMD with bagging (Peter)
+[X]. Add `requirements.txt`. At the moment, dependencies are self-evident: just run `/notebooks/Demo.ipynb`;
+    - Now a pyproject.toml file
+[] Review current data model (list of ndarrays);
+[] Set up data pipeline. E.g., select one scalar field for now;
+[] Evaluation metrics - WeatherBench;
+[] Implement a climatology model as benchmark;
+[] Uncertainty Quantification - DMD with bagging (Peter)
