@@ -11,6 +11,8 @@ Here is an example of a fit to a synthetic data from a PDE. More details in `/No
 
 To install the dependencies from the pyproject.toml file, run the following commands (assuming macOS) to create a virtual environment and install the package dependencies in editable mode:
 
+For venv users:
+
 ```bash
 git clone https://github.com/ClimeTrend/DMD.git
 python -m venv venv
@@ -18,6 +20,14 @@ source venv/bin/activate
 pip install -e .
 ```
 
+And for conda users:
+
+```bash
+git clone https://github.com/ClimeTrend/DMD.git
+conda create --name myenv
+conda activate myenv
+pip install -e .
+```
 
 
 DMD does not really require batching the training data in the deep-AI sense. 
