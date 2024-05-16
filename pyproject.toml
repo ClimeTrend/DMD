@@ -29,5 +29,6 @@ dependencies = [
     "ipympl", 
     "ipywidgets",
     "ipykernel", 
-    "jax"
+    "jax", 
+    "jaxlib"
 ]
