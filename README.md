@@ -40,14 +40,7 @@ Directory `/data` contains small sparse data, used for testing.
 
 I (@pyatsysh) recommend to start by running `/notebooks/Demo.ipynb`. This notebook contains a minimal example of applying DMD to climate-like dataset. The actual data is generated from an advection-diffusion PDE.
 
-The following capabilities are so far implemented (I've re-implemented some of those found in PyDMD):
 
-* Use boolean masks to select subsets of image. E.g., 
-* Window average of training data. E.g. take window-mean over T snapshots
-* Preliminary work for Uncertainty Quantification: time-delay is re-implemented
-* Train DMD, using the most stable version from PyDMD package. 
-* Extract Koopman eigenvalues and eigenfunctions (modes) from trained DMD
-* Run DMD forward
 
 
 # Data model
@@ -66,3 +59,18 @@ Thus, training data is a list of size `N_years`, where each element is `ndarray`
 - [ ] Evaluation metrics - WeatherBench;
 - [ ] Implement a climatology model as benchmark;
 - [ ] Uncertainty Quantification - DMD with bagging (Peter)
+
+# Implemented capabilities
+The following capabilities are so far implemented (I've re-implemented some of those found in PyDMD):
+
+* Use boolean masks to select subsets of image. E.g., 
+* Window average of training data. E.g. take window-mean over T snapshots
+* Preliminary work for Uncertainty Quantification: time-delay is re-implemented
+* Train DMD, using the most stable version from PyDMD package. 
+* Extract Koopman eigenvalues and eigenfunctions (modes) from trained DMD
+* Run DMD forward
+
+
+![Bootstrapped DMD with UQ](image.png)
+
+![Performance on the test set (prediction on the left, ground-truth on the right)](image-1.png)
