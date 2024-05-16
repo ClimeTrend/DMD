@@ -27,5 +27,6 @@ dependencies = [
     "dill", 
     "ipympl", 
     "ipywidgets",
-    "ipykernel"
+    "ipykernel", 
+    "jax"
 ]
