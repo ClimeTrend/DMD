@@ -49,10 +49,10 @@ Thus, training data is a list of size `N_years`, where each element is `ndarray`
 
 
 # Short Term Plan:
-[X]. Add `requirements.txt`. At the moment, dependencies are self-evident: just run `/notebooks/Demo.ipynb`;
+- [X] Add `requirements.txt`. At the moment, dependencies are self-evident: just run `/notebooks/Demo.ipynb`;
     - Now a pyproject.toml file
-[] Review current data model (list of ndarrays);
-[] Set up data pipeline. E.g., select one scalar field for now;
-[] Evaluation metrics - WeatherBench;
-[] Implement a climatology model as benchmark;
-[] Uncertainty Quantification - DMD with bagging (Peter)
+- [] Review current data model (list of ndarrays);
+- [] Set up data pipeline. E.g., select one scalar field for now;
+- [] Evaluation metrics - WeatherBench;
+- [] Implement a climatology model as benchmark;
+- [] Uncertainty Quantification - DMD with bagging (Peter)
