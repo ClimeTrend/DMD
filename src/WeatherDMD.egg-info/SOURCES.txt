@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+src/WeatherDMD/__init__.py
+src/WeatherDMD/data_wrangle.py
+src/WeatherDMD/dmd_routines.py
+src/WeatherDMD/plot_jupyter.py
+src/WeatherDMD.egg-info/PKG-INFO
+src/WeatherDMD.egg-info/SOURCES.txt
+src/WeatherDMD.egg-info/dependency_links.txt
+src/WeatherDMD.egg-info/requires.txt
+src/WeatherDMD.egg-info/top_level.txt
