@@ -110,19 +110,22 @@ def reshape_data2dmd_delme(X, t, time_delay = 2, isKeepFirstTimes = True):
     
     return X_delayed, t_delayed, X.shape
     
-def train_dmd(X_delayed, t_delayed, rank = 3):
-
+def train_dmd(X_delayed, 
+              t_delayed, 
+              svd_rank=3, 
+              eig_constraints={
+                        "stable", # choose Re(lambda)<0
+                        "conjugate_pairs", # force complex conjugate pairs
+                        } ):
     """
-
     Train dmd on snapshots X of time-delayed flattened square 2D data and times t. 
     
-    Input: 
+    Parameters: 
         X - (time_delay*ny*nx, N_time-time_delay+1): array of 
             snapshots corresponding to t time points
         t - (N_time, ) array of time points
-        nxny = (nx, ny) tuple of mesh sizes for reshape. 
-            Note: for array of shape (a, b), nx = b, ny = a
-        rank - dmd rank
+        eig_constraints - constraints on eigenvalues -- see BOPDMD doc
+        
     
     Returns: 
     The DMD fit parameters
@@ -137,7 +140,7 @@ def train_dmd(X_delayed, t_delayed, rank = 3):
 
     2. Workflow
     
-    # X0 is data of shape (N_time, ny, nx)
+    # X0 is time series of images of shape (N_time, ny, nx)
     
     # prepare time delay and reshape data as dmd input 
     X_delayed, t_delayed, data_shape = reshape_data2dmd(X0, t, time_delay = 2, 
@@ -151,14 +154,12 @@ def train_dmd(X_delayed, t_delayed, rank = 3):
 
     """
 
+
     # DMD OBJECT
     optdmd = BOPDMD(
-                    svd_rank=rank, 
+                    svd_rank=svd_rank, 
                     num_trials=0, # for bagging
-                    eig_constraints={
-                    "stable", # choose Re(lambda)<0
-                    "conjugate_pairs", # force complex conjugate pairs
-                    } 
+                    eig_constraints=eig_constraints
                                     )
 
     
@@ -184,7 +185,11 @@ def train_dmd(X_delayed, t_delayed, rank = 3):
     return Lambda, Psi, bn
 
 
-def bootstrap_train_dmd(N_boot_strap, X_delayed, t_delayed, rank = 3):
+def bootstrap_train_dmd(N_boot_strap, X_delayed, t_delayed, svd_rank=3, 
+              eig_constraints={
+                        "stable", # choose Re(lambda)<0
+                        "conjugate_pairs", # force complex conjugate pairs
+                        } ):
     """
     Bootstrap over t for dmd with N_boot_strap samples 
 
@@ -194,24 +199,27 @@ def bootstrap_train_dmd(N_boot_strap, X_delayed, t_delayed, rank = 3):
         
     """
     
-    n = X_delayed.shape[0]
+    nx = X_delayed.shape[0]
+    nt = len(t_delayed)
 
     L_s = np.zeros((N_boot_strap, rank))+0j
-    Psi_s = np.zeros((N_boot_strap, rank, n))+0j
+    Psi_s_ = np.zeros((N_boot_strap, nx, rank))+0j
     bn_s = np.zeros((N_boot_strap, rank))
 
     # perform bootstrap resampling
     for i in trange(N_boot_strap):
-        inds = np.unique(np.sort(np.random.randint(0, len(t_delayed)-1, (len(t_delayed),) ) ) )
+        inds = np.unique(np.sort(np.random.randint(0, nt-1, (nt,) ) ) )
         X1 = X_delayed[:, inds]
         t1 = t_delayed[inds]
 
-        L_s[i], Psi_s[i], bn_s[i] = train_dmd(X1, t1, rank = rank);
+        L_s[i], Psi_s_[i], bn_s[i] = train_dmd(X1, 
+                                               t1, 
+                                               svd_rank = svd_rank, 
+                                               eig_constraints = eig_constraints)
 
-    return L_s, Psi_s, bn_s
+    return L_s, Psi_s_, bn_s
 
-
-def eval_dmd(Lambda, Psi, bn, t):
+def eval_dmd(Lambda, Psi, bn, t, isPositive = True):
     """
     Assemble DMD expansion from Lambda, Psi, bn and evaluate at t
     Take real part and set neagive values to zero
@@ -226,12 +234,11 @@ def eval_dmd(Lambda, Psi, bn, t):
     dmd_expansion = lambda t, Lambda, Psi, bn: (Psi.T @ (bn[:,None]*np.exp(Lambda[:, None]*t))).T
 
     out = dmd_expansion(t, Lambda, Psi, bn).real
-    out[out<0]=0.
+    if isPositive: out[out<0]=0.
 
     return out
 
-
-def eval_dmd_ensemble(L_s1, Psi_s1, bn_s1, T):
+def eval_dmd_ensemble(L_s1, Psi_s1, bn_s1, T, isPositive = True):
     """
     same as eval_dmd, but for ensembles of lamnda, etc, stacked along leading dim
     """
@@ -239,6 +246,6 @@ def eval_dmd_ensemble(L_s1, Psi_s1, bn_s1, T):
     out = np.zeros((L_s1.shape[0], len(T), Psi_s1.shape[-1], Psi_s1.shape[-1]))
 
     for i, (lam, psi, bn) in enumerate(zip(L_s1, Psi_s1, bn_s1)):
-        out[i] = eval_dmd(lam, psi, bn, T)
+        out[i] = eval_dmd(lam, psi, bn, T, isPositive)
 
     return out
