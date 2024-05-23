@@ -33,4 +33,5 @@ dependencies = [
     "jaxlib",
     "xarray",
     "netCDF4",
+    "zarr",
 ]
