@@ -35,4 +35,5 @@ dependencies = [
     "netCDF4",
     "zarr",
     "pre-commit",
+    "pyprojroot",
 ]
