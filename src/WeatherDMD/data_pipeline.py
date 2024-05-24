@@ -20,18 +20,17 @@ def load_data(file_name: str):
 
     path = os.path.join(here(), "data/input", file_name)
 
-    if path.endswith(".nc"):
-        try:
+    try:
+        if path.endswith(".nc"):
             ds = xr.open_dataset(path)
-        except Exception as e:
-            print(f"Error loading dataset: {e}")
-    elif path.endswith(".zarr"):
-        try:
+        elif path.endswith(".zarr"):
             ds = xr.open_zarr(path)
-        except Exception as e:
-            print(f"Error loading dataset: {e}")
-    else:
-        raise ValueError("File format not supported")
+        else:
+            raise ValueError("File format not supported")
+    except Exception as e:
+        print(f"Error loading dataset: {e}")
+        return None
+
     return ds
 
 
@@ -59,6 +58,8 @@ def dataset_to_array(ds: xr.Dataset, var_name: str, level: int = None):
             data = ds[var_name].isel(level=0).values
         else:
             data = ds[var_name].sel(level=level).values
-        return data
     except Exception as e:
         print(f"Error converting dataset to array: {e}")
+        return None
+
+    return data
