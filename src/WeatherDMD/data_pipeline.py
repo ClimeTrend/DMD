@@ -51,15 +51,19 @@ def dataset_to_array(ds: xr.Dataset, var_name: str, level: int = None):
     -------
     data : numpy.ndarray
         Numpy array with the data extracted from the dataset, with dimensions (time, lat, lon).
+    attrs : dict
+        Dictionary with the attributes of the variable.
     """
 
     try:
         if level is None:
-            data = ds[var_name].isel(level=0).values
+            data = ds[var_name].isel(level=0)
         else:
-            data = ds[var_name].sel(level=level).values
+            data = ds[var_name].sel(level=level)
+        attrs = data.attrs
+        data = data.values
     except Exception as e:
         print(f"Error converting dataset to array: {e}")
-        return None
+        return None, None
 
-    return data
+    return data, attrs
