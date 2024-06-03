@@ -34,7 +34,9 @@ def load_data(file_name: str):
     return ds
 
 
-def dataset_to_array(ds: xr.Dataset, var_name: str, level: int = None):
+def dataset_to_array(
+    ds: xr.Dataset, var_name: str, level: int = None, downsample: int = 1
+):
     """
     Convert xarray dataset to numpy array.
 
@@ -46,13 +48,19 @@ def dataset_to_array(ds: xr.Dataset, var_name: str, level: int = None):
         Variable name to extract from the dataset.
     level : int, optional
         Level to extract from the dataset. If not specified, the first level is extracted.
+    downsample : int, optional
+        Factor to downsample the data in space. Default is 1 (no downsampling). Must be a positive integer.
 
     Returns
     -------
     data : numpy.ndarray
-        Numpy array with the data extracted from the dataset, with dimensions (time, lat, lon).
+        Numpy array with the variable extracted from the dataset, with dimensions (time, lat, lon).
     attrs : dict
         Dictionary with the attributes of the variable.
+    coords : DataArray Coordinates
+        Coordinates of the variable.
+    dims : tuple
+        Tuple with the dimensions of the variable.
     """
 
     try:
@@ -60,10 +68,13 @@ def dataset_to_array(ds: xr.Dataset, var_name: str, level: int = None):
             data = ds[var_name].isel(level=0)
         else:
             data = ds[var_name].sel(level=level)
+        data = data[:, ::downsample, ::downsample]
         attrs = data.attrs
+        coords = data.coords
+        dims = data.dims
         data = data.values
     except Exception as e:
         print(f"Error converting dataset to array: {e}")
-        return None, None
+        return None, None, None, None
 
-    return data, attrs
+    return data, attrs, coords, dims
