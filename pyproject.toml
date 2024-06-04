@@ -36,4 +36,5 @@ dependencies = [
     "zarr",
     "pre-commit",
     "pyprojroot",
+    "pytest",
 ]
