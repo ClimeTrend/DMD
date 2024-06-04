@@ -39,7 +39,6 @@ def dataset_to_array(
     variable: str,
     level: int = None,
     downsample: int = 1,
-    get_subregion: bool = False,
     subregion: tuple = None,
 ) -> tuple:
     """
