@@ -3,7 +3,7 @@ import os
 from pyprojroot import here
 
 
-def load_data(file_name: str):
+def load_data(file_name: str) -> xr.Dataset:
     """
     Load dataset from netCDF file or Zarr store.
 
@@ -35,21 +35,28 @@ def load_data(file_name: str):
 
 
 def dataset_to_array(
-    ds: xr.Dataset, var_name: str, level: int = None, downsample: int = 1
-):
+    ds: xr.Dataset,
+    variable: str,
+    level: int = None,
+    downsample: int = 1,
+    get_subregion: bool = False,
+    subregion: tuple = None,
+) -> tuple:
     """
-    Convert xarray dataset to numpy array.
+    Extract a variable from xarray dataset and convert it to numpy array.
 
     Parameters
     ----------
     ds : xarray.Dataset
         Dataset to convert.
-    var_name : str
+    variable : str
         Variable name to extract from the dataset.
     level : int, optional
         Level to extract from the dataset. If not specified, the first level is extracted.
     downsample : int, optional
-        Factor to downsample the data in space. Default is 1 (no downsampling). Must be a positive integer.
+        Factor to downsample the dataset in the lat and lon directions. Default is 1. Must be an integer greater than 0.
+    subregion : tuple, optional
+        Tuple with the coordinates of the subregion to extract. Must be in the format (lat_min, lat_max, lon_min, lon_max).
 
     Returns
     -------
@@ -65,16 +72,23 @@ def dataset_to_array(
 
     try:
         if level is None:
-            data = ds[var_name].isel(level=0)
+            data = ds[variable].isel(level=0)
         else:
-            data = ds[var_name].sel(level=level)
-        data = data[:, ::downsample, ::downsample]
+            data = ds[variable].sel(level=level)
+        if subregion:
+            data = data.sel(
+                latitude=slice(subregion[0], subregion[1]),
+                longitude=slice(subregion[2], subregion[3]),
+            )
+        data = data.coarsen(
+            latitude=downsample, longitude=downsample, boundary="trim"
+        ).mean()
         attrs = data.attrs
         coords = data.coords
         dims = data.dims
         data = data.values
     except Exception as e:
-        print(f"Error converting dataset to array: {e}")
+        print(f"Error converting dataset to numpy array: {e}")
         return None, None, None, None
 
     return data, attrs, coords, dims
