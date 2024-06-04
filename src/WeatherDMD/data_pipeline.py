@@ -92,3 +92,36 @@ def dataset_to_array(
         return None, None, None, None
 
     return data, attrs, coords, dims
+
+
+def array_to_dataarray(
+    data: xr.DataArray, attrs: dict, coords: xr.DataArray, dims: tuple
+) -> xr.DataArray:
+    """
+    Convert numpy array to xarray DataArray.
+
+    Parameters
+    ----------
+    data : numpy.ndarray
+        Numpy array to convert.
+    attrs : dict
+        Dictionary with the attributes of the variable.
+    coords : DataArray Coordinates
+        Coordinates of the variable.
+    dims : tuple
+        Tuple with the dimensions of the variable.
+
+    Returns
+    -------
+    da : xarray.DataArray
+        DataArray created from the numpy array.
+    """
+
+    try:
+        da = xr.DataArray(data, coords=coords, dims=dims)
+        da.attrs = attrs
+    except Exception as e:
+        print(f"Error converting numpy array to DataArray: {e}")
+        return None
+
+    return da
