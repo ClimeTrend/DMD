@@ -3,6 +3,7 @@ Tests for the data pipeline module.
 """
 
 import xarray as xr
+import numpy as np
 import os
 import pytest
 from WeatherDMD.data_pipeline import load_data, dataset_to_array, array_to_dataarray
@@ -33,7 +34,17 @@ def test_load_data(temp_data):
 
 
 def test_dataset_to_array():
-    pass
+    """
+    Test the dataset_to_array function.
+    """
+    ds = load_data("temp_" + file_name)
+    lat_min, lat_max, lon_min, lon_max = 90, -90, 90, 270
+    data, attrs, coords, dims = dataset_to_array(
+        ds, "temperature", subregion=(lat_min, lat_max, lon_min, lon_max), downsample=2
+    )
+    assert isinstance(data, np.ndarray)
+    assert np.all(coords["latitude"] >= -90) and np.all(coords["latitude"] <= 90)
+    assert np.all(coords["longitude"] >= 90) and np.all(coords["longitude"] <= 270)
 
 
 def test_array_to_dataarray():
