@@ -25,6 +25,7 @@ def temp_data():
     os.system(f"rm {temp_path}")
 
 
+@pytest.mark.dependency()
 def test_load_data(temp_data):
     """
     Test the load_data function.
@@ -33,6 +34,7 @@ def test_load_data(temp_data):
     assert isinstance(ds, xr.Dataset)
 
 
+@pytest.mark.dependency(depends=["test_load_data"])
 def test_dataset_to_array():
     """
     Test the dataset_to_array function.
@@ -47,5 +49,13 @@ def test_dataset_to_array():
     assert np.all(coords["longitude"] >= 90) and np.all(coords["longitude"] <= 270)
 
 
+@pytest.mark.dependency(depends=["test_load_data", "test_dataset_to_array"])
 def test_array_to_dataarray():
-    pass
+    """
+    Test the array_to_dataarray function.
+    """
+    ds = load_data("temp_" + file_name)
+    data, attrs, coords, dims = dataset_to_array(ds, "temperature")
+    da = array_to_dataarray(data, attrs, coords, dims)
+    assert isinstance(da, xr.DataArray)
+    assert da.coords.equals(coords)
