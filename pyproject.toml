@@ -37,4 +37,5 @@ dependencies = [
     "pre-commit",
     "pyprojroot",
     "pytest",
+    "pytest-dependency",
 ]
