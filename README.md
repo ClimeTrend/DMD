@@ -28,6 +28,7 @@ git clone https://github.com/ClimeTrend/DMD.git
 cd DMD
 conda create --name myenv
 conda activate myenv
+conda install pip
 pip install -e .
 ```
 
