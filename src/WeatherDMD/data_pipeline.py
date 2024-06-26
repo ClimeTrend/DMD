@@ -67,7 +67,7 @@ def dataset_to_array(
         Numpy array with the variable extracted from the dataset, with dimensions (time, lat, lon).
     attrs : dict
         Dictionary with the attributes of the variable.
-    coords : DataArray Coordinates
+    coords : dict
         Coordinates of the variable.
     dims : tuple
         Tuple with the dimensions of the variable.
@@ -86,7 +86,7 @@ def dataset_to_array(
             latitude=downsample, longitude=downsample, boundary="trim"
         ).mean()
         attrs = data.attrs
-        coords = data.coords
+        coords = dict(data.coords)
         dims = data.dims
         data = data.values
     except Exception as e:
@@ -97,7 +97,7 @@ def dataset_to_array(
 
 
 def array_to_dataarray(
-    data: xr.DataArray, attrs: dict, coords: xr.DataArray, dims: tuple
+    data: xr.DataArray, attrs: dict, coords: dict, dims: tuple
 ) -> xr.DataArray:
     """
     Convert numpy array to xarray DataArray.
@@ -108,7 +108,7 @@ def array_to_dataarray(
         Numpy array to convert.
     attrs : dict
         Dictionary with the attributes of the variable.
-    coords : DataArray Coordinates
+    coords : dict
         Coordinates of the variable.
     dims : tuple
         Tuple with the dimensions of the variable.
