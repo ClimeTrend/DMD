@@ -1,6 +1,7 @@
 import xarray as xr
 import os
 from pyprojroot import here
+import numpy as np
 
 
 def load_data(file_name: str) -> xr.Dataset:
@@ -124,3 +125,27 @@ def array_to_dataarray(
         return None
 
     return da
+
+
+def datarray_to_zarr(da: xr.DataArray, file_name: str = "era5_dmd_forecast"):
+    """
+    Save DataArray to Zarr store.
+
+    Parameters
+    ----------
+    da : xarray.DataArray
+        DataArray to save.
+    file_name : str
+        Name of the file to save. Will be preceded by the time range of the data.
+        Will be saved in the data/output directory.
+    """
+
+    time = da.time.values
+    time_start = np.datetime_as_string(time[0], unit="D")
+    time_end = np.datetime_as_string(time[-1], unit="D")
+
+    path = os.path.join(
+        here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
+    )
+    da.to_zarr(path, mode="w")
+    print(f"DataArray saved to {path}")
