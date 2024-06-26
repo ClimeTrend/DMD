@@ -39,8 +39,9 @@ def dataset_to_array(
     ds: xr.Dataset,
     variable: str,
     level: int = None,
+    lat_slice: slice = None,
+    lon_slice: slice = None,
     downsample: int = 1,
-    subregion: tuple = None,
 ) -> tuple:
     """
     Extract a variable from xarray dataset and convert it to numpy array.
@@ -53,10 +54,12 @@ def dataset_to_array(
         Variable name to extract from the dataset.
     level : int, optional
         Level to extract from the dataset. If not specified, the first level is extracted.
+    lat_slice : slice, optional
+        Slice to extract from the latitude dimension of the dataset.
+    lon_slice : slice, optional
+        Slice to extract from the longitude dimension of the dataset.
     downsample : int, optional
         Factor to downsample the dataset in the lat and lon directions. Default is 1. Must be an integer greater than 0.
-    subregion : tuple, optional
-        Tuple with the coordinates of the subregion to extract. Must be in the format (lat_min, lat_max, lon_min, lon_max).
 
     Returns
     -------
@@ -75,11 +78,10 @@ def dataset_to_array(
             data = ds[variable].isel(level=0)
         else:
             data = ds[variable].sel(level=level)
-        if subregion:
-            data = data.sel(
-                latitude=slice(subregion[0], subregion[1]),
-                longitude=slice(subregion[2], subregion[3]),
-            )
+        if lat_slice:
+            data = data.sel(latitude=lat_slice)
+        if lon_slice:
+            data = data.sel(longitude=lon_slice)
         data = data.coarsen(
             latitude=downsample, longitude=downsample, boundary="trim"
         ).mean()
