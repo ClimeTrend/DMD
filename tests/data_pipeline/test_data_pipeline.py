@@ -50,14 +50,14 @@ def test_dataset_to_array():
     assert np.all(coords["longitude"] >= 100) and np.all(coords["longitude"] <= 140)
 
 
-@pytest.mark.skip(reason="Had to downgrade xarray to install weatherbench2")
 @pytest.mark.dependency(depends=["test_load_data", "test_dataset_to_array"])
 def test_array_to_dataarray():
     """
     Test the array_to_dataarray function.
     """
     ds = load_data("temp_" + file_name)
+    da1 = ds["temperature"].isel(level=0)
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
-    da = array_to_dataarray(data, attrs, coords, dims)
-    assert isinstance(da, xr.DataArray)
-    assert da.coords.equals(coords)  # TODO: need to fix this due to downgrading xarray
+    da2 = array_to_dataarray(data, attrs, coords, dims)
+    assert isinstance(da2, xr.DataArray)
+    xr.testing.assert_equal(da1, da2)
