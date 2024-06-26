@@ -40,12 +40,14 @@ def test_dataset_to_array():
     Test the dataset_to_array function.
     """
     ds = load_data("temp_" + file_name)
-    lat_slice = slice(-20, 20)
+    lat_slice = slice(20, -20)
     lon_slice = slice(100, 140)
     data, _, coords, _ = dataset_to_array(
         ds, "temperature", downsample=2, lat_slice=lat_slice, lon_slice=lon_slice
     )
     assert isinstance(data, np.ndarray)
+    assert data.ndim == 3
+    assert not any([dim == 0 for dim in data.shape])
     assert np.all(coords["latitude"] >= -20) and np.all(coords["latitude"] <= 20)
     assert np.all(coords["longitude"] >= 100) and np.all(coords["longitude"] <= 140)
 
