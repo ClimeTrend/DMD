@@ -145,16 +145,19 @@ def datarray_to_zarr(
         If True, the start and end times of the DataArray will be prepended to the file name.
     """
 
-    time = da.time.values
-    time_start = np.datetime_as_string(time[0], unit="D")
-    time_end = np.datetime_as_string(time[-1], unit="D")
-
-    if prepend_time:
-        path = os.path.join(
-            here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
-        )
-    else:
-        path = os.path.join(here(), "data/output", f"{file_name}.zarr")
-    ds = da.to_dataset(name="temperature", promote_attrs=True)
-    ds.to_zarr(path, mode="w", consolidated=True)
-    print(f"Data saved to {path}")
+    try:
+        if prepend_time:
+            time = da.time.values
+            time_start = np.datetime_as_string(time[0], unit="D")
+            time_end = np.datetime_as_string(time[-1], unit="D")
+            path = os.path.join(
+                here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
+            )
+        else:
+            path = os.path.join(here(), "data/output", f"{file_name}.zarr")
+        ds = da.to_dataset(name="temperature", promote_attrs=True)
+        ds.to_zarr(path, mode="w-", consolidated=True)
+        print(f"Data saved to {path}")
+    except Exception as e:
+        print(f"Error saving DataArray to Zarr: {e}")
+        return None
