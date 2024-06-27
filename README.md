@@ -15,6 +15,7 @@ For venv users:
 
 ```bash
 git clone https://github.com/ClimeTrend/DMD.git
+cd DMD
 python -m venv venv
 source venv/bin/activate
 pip install -e .
@@ -24,8 +25,10 @@ And for conda users:
 
 ```bash
 git clone https://github.com/ClimeTrend/DMD.git
+cd DMD
 conda create --name myenv
 conda activate myenv
+conda install pip
 pip install -e .
 ```
 
