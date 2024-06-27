@@ -131,7 +131,7 @@ def array_to_dataarray(
 
 def datarray_to_zarr(da: xr.DataArray, file_name: str = "era5_dmd_forecast"):
     """
-    Save DataArray to Zarr store.
+    Convert DataArray to Dataset and save it to a Zarr store.
 
     Parameters
     ----------
@@ -149,5 +149,6 @@ def datarray_to_zarr(da: xr.DataArray, file_name: str = "era5_dmd_forecast"):
     path = os.path.join(
         here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
     )
-    da.to_zarr(path, mode="w")
-    print(f"DataArray saved to {path}")
+    ds = da.to_dataset(name="temperature", promote_attrs=True)
+    ds.to_zarr(path, mode="w", consolidated=True)
+    print(f"Data saved to {path}")
