@@ -129,7 +129,9 @@ def array_to_dataarray(
     return da
 
 
-def datarray_to_zarr(da: xr.DataArray, file_name: str = "era5_dmd_forecast"):
+def datarray_to_zarr(
+    da: xr.DataArray, file_name: str = "era5_dmd_forecast", prepend_time: bool = True
+):
     """
     Convert DataArray to Dataset and save it to a Zarr store.
 
@@ -138,17 +140,21 @@ def datarray_to_zarr(da: xr.DataArray, file_name: str = "era5_dmd_forecast"):
     da : xarray.DataArray
         DataArray to save.
     file_name : str
-        Name of the file to save. Will be preceded by the time range of the data.
-        Will be saved in the data/output directory.
+        Name of the file to save. Will be saved in the data/output directory.
+    prepend_time : bool
+        If True, the start and end times of the DataArray will be prepended to the file name.
     """
 
     time = da.time.values
     time_start = np.datetime_as_string(time[0], unit="D")
     time_end = np.datetime_as_string(time[-1], unit="D")
 
-    path = os.path.join(
-        here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
-    )
+    if prepend_time:
+        path = os.path.join(
+            here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
+        )
+    else:
+        path = os.path.join(here(), "data/output", f"{file_name}.zarr")
     ds = da.to_dataset(name="temperature", promote_attrs=True)
     ds.to_zarr(path, mode="w", consolidated=True)
     print(f"Data saved to {path}")
