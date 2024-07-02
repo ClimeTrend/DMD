@@ -26,9 +26,9 @@ def load_data(file_name: str) -> xr.Dataset:
         path = os.path.join(here(), "data/input", file_name)
 
     try:
-        if path.endswith(".nc"):
+        if ".nc" in path:
             ds = xr.open_dataset(path)
-        elif path.endswith(".zarr"):
+        elif ".zarr" in path:
             ds = xr.open_zarr(path)
         else:
             raise ValueError("File format not supported")
