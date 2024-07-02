@@ -4,17 +4,15 @@ from pyprojroot import here
 import numpy as np
 
 
-def load_data(file_name: str, dir_path: str = None) -> xr.Dataset:
+def load_data(file_name: str) -> xr.Dataset:
     """
     Load dataset from netCDF file or Zarr store.
 
     Parameters
     ----------
     file_name : str
-        Name of the file to load.
-    dir_path : str, optional
-        Relative path to the directory containing the file.
-        If not specified, the file is assumed to be in the data/input directory.
+        Name of the file to load or full path to the file.
+        If only the name is provided, the file is assumed to be in the data/input directory.
 
     Returns
     -------
@@ -22,8 +20,8 @@ def load_data(file_name: str, dir_path: str = None) -> xr.Dataset:
         Dataset loaded from the file.
     """
 
-    if dir_path:
-        path = os.path.join(here(), dir_path, file_name)
+    if os.path.sep in file_name:
+        path = file_name
     else:
         path = os.path.join(here(), "data/input", file_name)
 
