@@ -11,7 +11,7 @@ def load_data(file_name: str) -> xr.Dataset:
     Parameters
     ----------
     file_name : str
-        Name of the file to load or full path to the file.
+        Name of the file to load or relative/absolute path to the file.
         If only the name is provided, the file is assumed to be in the data/input directory.
 
     Returns
@@ -21,7 +21,8 @@ def load_data(file_name: str) -> xr.Dataset:
     """
 
     if os.path.sep in file_name:
-        path = file_name
+        rel_path = os.path.join(here(), file_name)
+        path = rel_path if os.path.exists(rel_path) else file_name
     else:
         path = os.path.join(here(), "data/input", file_name)
 
