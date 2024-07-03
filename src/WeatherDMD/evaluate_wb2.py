@@ -104,23 +104,39 @@ def evaluate_wb2(
     use_beam: bool = False,
 ) -> None:
     """
-    Function to evaluate WeatherBench2 data.
+    Compute the evaluation metrics for the forecast using WeatherBench2.
+    The results are saved in the data/weatherbench2 directory, prefixed with the forecast file name.
 
     Parameters
     ----------
     obs_path : str
-        Path to the observation data.
+        Path to the observation data. Can be a relative path, an absolute path, or a file name.
+        If it's a file name, it's assumed to be in the data/input directory.
+    forecast_path : str
+        Path to the forecast data. Can be a relative path, an absolute path, or a file name.
+        If it's a file name, it's assumed to be in the data/output directory.
+    variables : list, optional
+        List of variables to evaluate. If None, all variables in the forecast data are evaluated.
+    levels : list, optional
+        List of levels to evaluate. If None, all levels in the forecast data are evaluated.
+    start_date : str, optional
+        Start date for the evaluation (in the format "YYYY-MM-DD"). If None, the first date in the forecast data is used.
+    end_date : str, optional
+        End date for the evaluation (in the format "YYYY-MM-DD"). If None, the last date in the forecast data is used.
+    regions : dict, optional
+        Dictionary of regions to evaluate the data in. The keys are the names of the regions and the values are tuples
+        of the latitudinal and longitudinal slices for the region. If None, the global region is evaluated.
+    use_beam : bool, optional
+        Whether to use Apache Beam for the evaluation. If False, the evaluation is done in memory. Default is False.
     """
 
     forecast = load_data(forecast_path)
 
     if variables is None:
         variables = [i for i in forecast.data_vars]
-        variables = variables[0]
 
     if levels is None:
-        levels = [i for i in forecast[variables].levels]
-        levels = levels[0]
+        levels = list(forecast.level.values)
 
     if start_date is None:
         start_date = forecast.time.values[0]
