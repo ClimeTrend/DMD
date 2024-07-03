@@ -1,4 +1,3 @@
-import xarray as xr
 import os
 import numpy as np
 from pyprojroot import here
@@ -12,15 +11,37 @@ from WeatherDMD.data_pipeline import load_data
 def set_up_data_config(
     obs_path: str,
     forecast_path: str,
-    output_dir: str,
     variables: list,
     levels: list,
     start_date: str,
     end_date: str,
 ) -> config.Data:
+    """
+    Set up the configuration for the data to be evaluated by WeatherBench2.
+    """
 
+    # if obs_path is a path and not a file name, check if its a relative path or an absolute path
+    # if it's a file name, assume it's in the data/input directory
+    if os.path.sep in obs_path:
+        abs_path = os.path.join(here(), obs_path)
+        obs_path = abs_path if os.path.exists(abs_path) else obs_path
+    else:
+        obs_path = os.path.join(here(), "data/input", obs_path)
+
+    # if forecast_path is a path and not a file name, check if its a relative path or an absolute path
+    # if it's a file name, assume it's in the data/output directory
+    if os.path.sep in forecast_path:
+        abs_path = os.path.join(here(), forecast_path)
+        forecast_path = abs_path if os.path.exists(abs_path) else forecast_path
+    else:
+        forecast_path = os.path.join(here(), "data/output", forecast_path)
+
+    # Get the forecast file name without the path and extension, so
+    # that it can be used as the prefix for the output file.
     output_file_prefix = os.path.basename(forecast_path)
     output_file_prefix, _ = os.path.splitext(output_file_prefix)
+
+    output_dir = os.path.join(here(), "data/weatherbench2")
 
     paths_config = config.Paths(
         forecast=forecast_path,
@@ -43,6 +64,9 @@ def set_up_data_config(
 
 
 def set_up_eval_config(regions: dict = None) -> dict:
+    """
+    Set up the configuration for the evaluation of the data by WeatherBench2.
+    """
 
     if regions is None:
         regions = {
@@ -62,7 +86,7 @@ def set_up_eval_config(regions: dict = None) -> dict:
         ),
         "non_spatial": config.Eval(
             metrics={
-                "rmse": RMSESqrtBeforeTimeAvg(),
+                "rmse": RMSESqrtBeforeTimeAvg(),  # TODO: support other metrics?
             },
             regions=regions,
         ),
