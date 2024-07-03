@@ -96,7 +96,6 @@ def set_up_eval_config(regions: dict = None) -> dict:
 def evaluate_wb2(
     obs_path: str,
     forecast_path: str,
-    output_dir: str = None,
     variables: list = None,
     levels: list = None,
     start_date: str = None,
@@ -104,11 +103,16 @@ def evaluate_wb2(
     regions: dict = None,
     use_beam: bool = False,
 ) -> None:
+    """
+    Function to evaluate WeatherBench2 data.
+
+    Parameters
+    ----------
+    obs_path : str
+        Path to the observation data.
+    """
 
     forecast = load_data(forecast_path)
-
-    if output_dir is None:
-        output_dir = os.path.join(here(), "data/weatherbench2")
 
     if variables is None:
         variables = [i for i in forecast.data_vars]
@@ -125,3 +129,42 @@ def evaluate_wb2(
     if end_date is None:
         end_date = forecast.time.values[-1]
         end_date = np.datetime_as_string(end_date, unit="D")
+
+    data_config = set_up_data_config(
+        obs_path=obs_path,
+        forecast_path=forecast_path,
+        variables=variables,
+        levels=levels,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    eval_config = set_up_eval_config(regions=regions)
+
+    if not use_beam:
+        print("Evaluating WB2 in memory...")
+        try:
+            evaluate_in_memory(data_config, eval_config)
+        except Exception as e:
+            print(f"Error evaluating WB2 in memory: {e}")
+    else:
+        try:
+            print("Evaluating WB2 with Beam...")
+            evaluate_with_beam(
+                data_config,
+                eval_config,
+                runner="DirectRunner",
+                input_chunks={"time": 1},
+                argv=[
+                    "--direct_num_workers",
+                    "0",
+                    "--direct_running_mode",
+                    "multi_threading",
+                ],
+            )
+        except Exception as e:
+            print(f"Error evaluating WB2 with Beam: {e}")
+            print("Falling back to evaluating WB2 in memory...")
+            try:
+                evaluate_in_memory(data_config, eval_config)
+            except Exception as e:
+                print(f"Error evaluating WB2 in memory: {e}")
