@@ -166,3 +166,32 @@ def datarray_to_zarr(
     except Exception as e:
         print(f"Error saving DataArray to Zarr: {e}")
         return None
+
+
+def prepare_for_wb2(
+    file_name: str,
+    output_path: str = None,
+    init_time: np.datetime64 = None,
+):
+    if os.path.sep in file_name:
+        abs_path = os.path.join(here(), file_name)
+        path = abs_path if os.path.exists(abs_path) else file_name
+    else:
+        path = os.path.join(here(), "data/output", file_name)
+
+    ds = load_data(path)
+
+    times = ds.time.values
+    time_deltas = np.diff(times)
+
+    if init_time is None:
+        if not np.all(time_deltas == time_deltas[0]):
+            raise ValueError("Time deltas are not constant")
+        time_delta = time_deltas[0]
+        init_time = times[0] - time_delta
+
+    lead_time = times - init_time
+    ds = ds.assign_coords(time=("time", lead_time)).rename(time="lead_time")
+
+    # insert new coordinate with name "time" which is the init_time
+    ds = ds.assign_coords(time=init_time)  # TODO: check if this is correct
