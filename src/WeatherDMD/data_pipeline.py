@@ -21,8 +21,8 @@ def load_data(file_name: str) -> xr.Dataset:
     """
 
     if os.path.sep in file_name:
-        rel_path = os.path.join(here(), file_name)
-        path = rel_path if os.path.exists(rel_path) else file_name
+        abs_path = os.path.join(here(), file_name)
+        path = abs_path if os.path.exists(abs_path) else file_name
     else:
         path = os.path.join(here(), "data/input", file_name)
 
