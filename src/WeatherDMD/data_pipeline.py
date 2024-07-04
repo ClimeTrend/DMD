@@ -135,7 +135,10 @@ def array_to_dataarray(
 
 
 def datarray_to_zarr(
-    da: xr.DataArray, file_name: str = "era5_dmd_forecast", prepend_time: bool = True
+    da: xr.DataArray,
+    variable_name: str,
+    file_name: str = "era5_dmd_forecast",
+    prepend_time: bool = True,
 ):
     """
     Convert DataArray to Dataset and save it to a Zarr store.
@@ -144,6 +147,8 @@ def datarray_to_zarr(
     ----------
     da : xarray.DataArray
         DataArray to save.
+    variable_name : str
+        Name of the variable in the DataArray.
     file_name : str
         Name of the file to save. Will be saved in the data/output directory.
     prepend_time : bool
@@ -160,7 +165,7 @@ def datarray_to_zarr(
             )
         else:
             path = os.path.join(here(), "data/output", f"{file_name}.zarr")
-        ds = da.to_dataset(name="temperature", promote_attrs=True)
+        ds = da.to_dataset(name=variable_name, promote_attrs=True)
         ds.to_zarr(path, mode="w-", consolidated=True)
         print(f"Data saved to {path}")
     except Exception as e:

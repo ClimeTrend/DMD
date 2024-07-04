@@ -82,7 +82,12 @@ def test_datarray_to_zarr():
     ds = load_data("temp_" + file_name + ".nc")
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
     da = array_to_dataarray(data, attrs, coords, dims)
-    datarray_to_zarr(da, "temp_" + file_name, prepend_time=False)
+    datarray_to_zarr(
+        da,
+        variable_name="temperature",
+        file_name="temp_" + file_name,
+        prepend_time=False,
+    )
     assert os.path.exists(
         os.path.join(here(), "data/output/temp_" + file_name + ".zarr")
     )
