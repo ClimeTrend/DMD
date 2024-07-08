@@ -126,6 +126,9 @@ def array_to_dataarray(
 
     try:
         da = xr.DataArray(data, coords=coords, dims=dims)
+        da = da.expand_dims(
+            level=[coords["level"].values]
+        )  # for WB2, need to have the level coordinate as a dimension
         da.attrs = attrs
     except Exception as e:
         print(f"Error converting numpy array to DataArray: {e}")
