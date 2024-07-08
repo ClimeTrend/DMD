@@ -187,7 +187,7 @@ def prepare_for_wb2(
         DataArray to prepare.
     init_time : np.datetime64, optional
         Initialization time of the forecast.
-        In not provided, the first timestamp in the time coordinate minus the unique time delta will be used.
+        In not provided, the first timestamp in the time coordinate minus the unique prediction time delta will be used.
 
     Returns
     -------
@@ -196,19 +196,21 @@ def prepare_for_wb2(
     """
 
     try:
-        times = da.time.values
-        time_deltas = np.diff(times)
+        time = da.time.values
+        time_delta = np.diff(time)
 
         if init_time is None:
-            if not np.all(time_deltas == time_deltas[0]):
-                raise ValueError("Time deltas are not constant")
-            time_delta = time_deltas[0]
-            init_time = times[0] - time_delta
+            if not np.all(time_delta == time_delta[0]):
+                raise ValueError("Prediction time delta is not constant")
+            time_delta = time_delta[0]
+            init_time = time[0] - time_delta
 
-        lead_time = times - init_time
+        prediction_timedelta = time - init_time
 
-        # update the time coordinate to be the lead time
-        da = da.assign_coords(time=("time", lead_time)).rename(time="lead_time")
+        # update the time coordinate to be the prediction_timedelta
+        da = da.assign_coords(time=("time", prediction_timedelta)).rename(
+            time="prediction_timedelta"
+        )
 
         # insert new coordinate with name "time" which is the init_time
         da = da.expand_dims(time=[init_time])
