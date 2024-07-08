@@ -192,7 +192,9 @@ def prepare_for_wb2(
     Returns
     -------
     da : xarray.DataArray
-        DataArray prepared for WeatherBench2 evaluation.
+        DataArray prepared for WeatherBench2 evaluation using the Init-time convention.
+        The time coordinate is renamed to "prediction_timedelta" and a new coordinate with name "time" is inserted.
+        This new coordinate is the initialization time of the forecast.
     """
 
     try:
