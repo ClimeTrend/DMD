@@ -69,6 +69,7 @@ def test_array_to_dataarray():
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
     da2 = array_to_dataarray(data, attrs, coords, dims)
     assert isinstance(da2, xr.DataArray)
+    da2 = da2.isel(level=0)
     xr.testing.assert_equal(da1, da2)
 
 
