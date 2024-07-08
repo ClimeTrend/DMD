@@ -11,6 +11,7 @@ from WeatherDMD.data_pipeline import (
     dataset_to_array,
     array_to_dataarray,
     datarray_to_zarr,
+    prepare_for_wb2,
 )
 from pyprojroot import here
 
@@ -96,3 +97,34 @@ def test_datarray_to_zarr():
     ds = xr.open_zarr(os.path.join(here(), "data/output/temp_" + file_name + ".zarr"))
     assert isinstance(ds, xr.Dataset)
     assert "temperature" in ds.variables
+
+
+def test_prepare_for_wb2():
+    """
+    Test the prepare_for_wb2 function.
+    """
+
+    ds = load_data("temp_" + file_name + ".nc")
+    data, attrs, coords, dims = dataset_to_array(ds, "temperature")
+    da = array_to_dataarray(data, attrs, coords, dims)
+    start_time = da.time.values[0]
+    da = prepare_for_wb2(da)
+    assert isinstance(da, xr.DataArray)
+    # check that da has the correct dimensions
+    assert all(
+        [
+            dim in da.dims
+            for dim in [
+                "time",
+                "latitude",
+                "longitude",
+                "level",
+                "prediction_timedelta",
+            ]
+        ]
+    )
+    init_time = da.time.values
+    # check that init_time contains a single value
+    assert len(init_time) == 1
+    # check that init_time is before start_time
+    assert init_time < start_time
