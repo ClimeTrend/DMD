@@ -99,6 +99,9 @@ def test_datarray_to_zarr():
     assert "temperature" in ds.variables
 
 
+@pytest.mark.dependency(
+    depends=["test_load_data", "test_dataset_to_array", "test_array_to_dataarray"]
+)
 def test_prepare_for_wb2():
     """
     Test the prepare_for_wb2 function.
