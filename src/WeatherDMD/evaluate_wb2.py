@@ -8,7 +8,7 @@ from weatherbench2.regions import SliceRegion
 from WeatherDMD.data_pipeline import load_data
 
 
-def set_up_data_config(
+def _set_up_data_config(
     obs_path: str,
     forecast_path: str,
     variables: list,
@@ -63,7 +63,7 @@ def set_up_data_config(
     )
 
 
-def set_up_eval_config(regions: dict = None) -> dict:
+def _set_up_eval_config(regions: dict = None) -> dict:
     """
     Set up the configuration for the evaluation of the data by WeatherBench2.
     """
@@ -146,7 +146,7 @@ def evaluate_wb2(
         end_date = forecast.time.values[-1]
         end_date = np.datetime_as_string(end_date, unit="D")
 
-    data_config = set_up_data_config(
+    data_config = _set_up_data_config(
         obs_path=obs_path,
         forecast_path=forecast_path,
         variables=variables,
@@ -154,7 +154,7 @@ def evaluate_wb2(
         start_date=start_date,
         end_date=end_date,
     )
-    eval_config = set_up_eval_config(regions=regions)
+    eval_config = _set_up_eval_config(regions=regions)
 
     if not use_beam:
         print("Evaluating WB2 in memory...")
