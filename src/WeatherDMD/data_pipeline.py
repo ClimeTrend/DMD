@@ -152,17 +152,17 @@ def datarray_to_zarr(
     file_name : str
         Name of the file to save. Will be saved in the data/output directory.
     prepend_time : bool
-        If True, the start and end times of the DataArray will be prepended to the file name.
+        If True, the start date of the DataArray will be prepended to the file name.
     """
 
     try:
         if prepend_time:
             time = da.time.values
-            time_start = np.datetime_as_string(time[0], unit="D")
-            time_end = np.datetime_as_string(time[-1], unit="D")
-            path = os.path.join(
-                here(), "data/output", f"{time_start}_{time_end}_{file_name}.zarr"
-            )
+            if time.size == 1:
+                time_start = np.datetime_as_string(time, unit="D")
+            else:
+                time_start = np.datetime_as_string(time[0], unit="D")
+            path = os.path.join(here(), "data/output", f"{time_start}_{file_name}.zarr")
         else:
             path = os.path.join(here(), "data/output", f"{file_name}.zarr")
         ds = da.to_dataset(name=variable_name, promote_attrs=True)
