@@ -59,7 +59,7 @@ def set_up_data_config(
     return config.Data(
         selection=selection_config,
         paths=paths_config,
-        by_init=False,  # we are following by-valid convention (see https://weatherbench2.readthedocs.io/en/latest/init-vs-valid-time.html)
+        by_init=True,  # we are following init-time convention (see https://weatherbench2.readthedocs.io/en/latest/init-vs-valid-time.html)
     )
 
 
