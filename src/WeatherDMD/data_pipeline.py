@@ -176,7 +176,24 @@ def datarray_to_zarr(
 def prepare_for_wb2(
     da: xr.DataArray,
     init_time: np.datetime64 = None,
-):
+) -> xr.DataArray:
+    """
+    Prepare DataArray for WeatherBench2 evaluation using the Init-time convention.
+    See https://weatherbench2.readthedocs.io/en/latest/init-vs-valid-time.html#init-time-convention.
+
+    Parameters
+    ----------
+    da : xarray.DataArray
+        DataArray to prepare.
+    init_time : np.datetime64, optional
+        Initialization time of the forecast.
+        In not provided, the first timestamp in the time coordinate minus the unique time delta will be used.
+
+    Returns
+    -------
+    da : xarray.DataArray
+        DataArray prepared for WeatherBench2 evaluation.
+    """
 
     try:
         times = da.time.values
