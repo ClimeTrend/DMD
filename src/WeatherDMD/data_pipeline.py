@@ -158,10 +158,7 @@ def datarray_to_zarr(
     try:
         if prepend_time:
             time = da.time.values
-            if time.size == 1:
-                time_start = np.datetime_as_string(time, unit="D")
-            else:
-                time_start = np.datetime_as_string(time[0], unit="D")
+            time_start = np.datetime_as_string(time[0], unit="D")
             path = os.path.join(here(), "data/output", f"{time_start}_{file_name}.zarr")
         else:
             path = os.path.join(here(), "data/output", f"{file_name}.zarr")
@@ -211,7 +208,7 @@ def prepare_for_wb2(
         da = da.assign_coords(time=("time", lead_time)).rename(time="lead_time")
 
         # insert new coordinate with name "time" which is the init_time
-        da = da.assign_coords(time=init_time)
+        da = da.expand_dims(time=[init_time])
         return da
     except Exception as e:
         print(f"Error preparing data for WeatherBench2: {e}")
