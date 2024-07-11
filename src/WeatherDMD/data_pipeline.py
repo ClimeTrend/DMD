@@ -162,9 +162,14 @@ def datarray_to_zarr(
         if prepend_time:
             time = da.time.values
             time_start = np.datetime_as_string(time[0], unit="D")
-            path = os.path.join(here(), "data/output", f"{time_start}_{file_name}.zarr")
+            path = os.path.join(here(), "data/output", f"{time_start}_{file_name}")
         else:
-            path = os.path.join(here(), "data/output", f"{file_name}.zarr")
+            path = os.path.join(here(), "data/output", f"{file_name}")
+
+        # add ".zarr" extension if not present
+        if ".zarr" not in path:
+            path = f"{path}.zarr"
+
         ds = da.to_dataset(name=variable_name, promote_attrs=True)
         ds.to_zarr(path, mode="w-", consolidated=True)
         print(f"Data saved to {path}")
