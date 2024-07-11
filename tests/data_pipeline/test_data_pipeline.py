@@ -9,7 +9,7 @@ import pytest
 from WeatherDMD.data_pipeline import (
     load_data,
     dataset_to_array,
-    array_to_dataarray,
+    array_to_datarray,
     datarray_to_zarr,
     prepare_for_wb2,
 )
@@ -61,14 +61,14 @@ def test_dataset_to_array():
 
 
 @pytest.mark.dependency(depends=["test_load_data", "test_dataset_to_array"])
-def test_array_to_dataarray():
+def test_array_to_datarray():
     """
-    Test the array_to_dataarray function.
+    Test the array_to_datarray function.
     """
     ds = load_data("temp_" + file_name + ".nc")
     da1 = ds["temperature"].isel(level=0)
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
-    da2 = array_to_dataarray(data, attrs, coords, dims)
+    da2 = array_to_datarray(data, attrs, coords, dims)
     assert isinstance(da2, xr.DataArray)
     assert "level" in da2.dims
     da2 = da2.isel(level=0)
@@ -76,7 +76,7 @@ def test_array_to_dataarray():
 
 
 @pytest.mark.dependency(
-    depends=["test_load_data", "test_dataset_to_array", "test_array_to_dataarray"]
+    depends=["test_load_data", "test_dataset_to_array", "test_array_to_datarray"]
 )
 def test_datarray_to_zarr():
     """
@@ -84,7 +84,7 @@ def test_datarray_to_zarr():
     """
     ds = load_data("temp_" + file_name + ".nc")
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
-    da = array_to_dataarray(data, attrs, coords, dims)
+    da = array_to_datarray(data, attrs, coords, dims)
     datarray_to_zarr(
         da,
         variable_name="temperature",
@@ -100,7 +100,7 @@ def test_datarray_to_zarr():
 
 
 @pytest.mark.dependency(
-    depends=["test_load_data", "test_dataset_to_array", "test_array_to_dataarray"]
+    depends=["test_load_data", "test_dataset_to_array", "test_array_to_datarray"]
 )
 def test_prepare_for_wb2():
     """
@@ -109,7 +109,7 @@ def test_prepare_for_wb2():
 
     ds = load_data("temp_" + file_name + ".nc")
     data, attrs, coords, dims = dataset_to_array(ds, "temperature")
-    da = array_to_dataarray(data, attrs, coords, dims)
+    da = array_to_datarray(data, attrs, coords, dims)
     start_time = da.time.values[0]
     da = prepare_for_wb2(da)
     assert isinstance(da, xr.DataArray)

@@ -101,7 +101,7 @@ def dataset_to_array(
     return data, attrs, coords, dims
 
 
-def array_to_dataarray(
+def array_to_datarray(
     data: xr.DataArray, attrs: dict, coords: dict, dims: tuple
 ) -> xr.DataArray:
     """
