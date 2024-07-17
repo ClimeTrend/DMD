@@ -30,7 +30,7 @@ def load_data(file_name: str) -> xr.Dataset:
             raise ValueError("File format not supported")
     except Exception as e:
         print(f"Error loading dataset: {e}")
-        return None
+        raise
 
     return ds
 
@@ -91,7 +91,7 @@ def dataset_to_array(
         data = data.values
     except Exception as e:
         print(f"Error converting dataset to numpy array: {e}")
-        return None, None, None, None
+        raise
 
     return data, attrs, coords, dims
 
@@ -124,7 +124,7 @@ def array_to_dataarray(
         da.attrs = attrs
     except Exception as e:
         print(f"Error converting numpy array to DataArray: {e}")
-        return None
+        raise
 
     return da
 
@@ -165,4 +165,4 @@ def datarray_to_zarr(
         print(f"Data saved to {path}")
     except Exception as e:
         print(f"Error saving DataArray to Zarr: {e}")
-        return None
+        raise
