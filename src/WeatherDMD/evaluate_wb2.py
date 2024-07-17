@@ -161,16 +161,20 @@ def evaluate_wb2(
         end_date = forecast.time.values[-1]
         end_date = np.datetime_as_string(end_date, unit="D")
 
-    data_config = _set_up_data_config(
-        obs_path=obs_path,
-        forecast_path=forecast_path,
-        output_dir=output_dir,
-        variables=variables,
-        levels=levels,
-        start_date=start_date,
-        end_date=end_date,
-    )
-    eval_config = _set_up_eval_config(regions=regions)
+    try:
+        data_config = _set_up_data_config(
+            obs_path=obs_path,
+            forecast_path=forecast_path,
+            output_dir=output_dir,
+            variables=variables,
+            levels=levels,
+            start_date=start_date,
+            end_date=end_date,
+        )
+        eval_config = _set_up_eval_config(regions=regions)
+    except Exception as e:
+        print(f"Error setting up configuration for WeatherBench2: {e}")
+        raise
 
     if not use_beam:
         print("Evaluating WB2 in memory...")
@@ -178,6 +182,7 @@ def evaluate_wb2(
             evaluate_in_memory(data_config, eval_config)
         except Exception as e:
             print(f"Error evaluating WB2 in memory: {e}")
+            raise
     else:
         try:
             print("Evaluating WB2 with Beam...")
@@ -200,3 +205,4 @@ def evaluate_wb2(
                 evaluate_in_memory(data_config, eval_config)
             except Exception as e:
                 print(f"Error evaluating WB2 in memory: {e}")
+                raise
