@@ -11,6 +11,7 @@ from WeatherDMD.data_pipeline import load_data
 def _set_up_data_config(
     obs_path: str,
     forecast_path: str,
+    output_dir: str,
     variables: list,
     levels: list,
     start_date: str,
@@ -40,8 +41,18 @@ def _set_up_data_config(
     # that it can be used as the prefix for the output file.
     output_file_prefix = os.path.basename(forecast_path)
     output_file_prefix, _ = os.path.splitext(output_file_prefix)
+    output_file_prefix = f"{output_file_prefix}_"
 
-    output_dir = os.path.join(here(), "data/weatherbench2")
+    if output_dir is None:
+        output_dir = os.path.join(here(), "data/weatherbench2")
+    else:
+        # check if output_dir is a relative path or an absolute path
+        if os.path.exists(os.path.join(here(), output_dir)):
+            output_dir = os.path.join(here(), output_dir)
+        elif os.path.exists(output_dir):
+            output_dir = output_dir
+        else:
+            raise FileNotFoundError(f"Directory {output_dir} does not exist.")
 
     paths_config = config.Paths(
         forecast=forecast_path,
@@ -96,6 +107,7 @@ def _set_up_eval_config(regions: dict = None) -> dict:
 def evaluate_wb2(
     obs_path: str,
     forecast_path: str,
+    output_dir: str = None,
     variables: list = None,
     levels: list = None,
     start_date: str = None,
@@ -115,6 +127,9 @@ def evaluate_wb2(
     forecast_path : str
         Path to the forecast data. Can be a relative path, an absolute path, or a file name.
         If it's a file name, it's assumed to be in the data/output directory.
+    output_dir : str, optional
+        Directory to save the evaluation results. Can be a relative path or an absolute path.
+        Default is the data/weatherbench2 directory.
     variables : list, optional
         List of variables to evaluate. If None, all variables in the forecast data are evaluated.
     levels : list, optional
@@ -149,6 +164,7 @@ def evaluate_wb2(
     data_config = _set_up_data_config(
         obs_path=obs_path,
         forecast_path=forecast_path,
+        output_dir=output_dir,
         variables=variables,
         levels=levels,
         start_date=start_date,
