@@ -6,6 +6,7 @@ import xarray as xr
 
 
 input_data_path = os.path.join(here(), "tests/evaluate_wb2/data/input")
+output_data_path = os.path.join(here(), "tests/evaluate_wb2/data/output")
 
 
 @pytest.fixture(scope="module")
@@ -22,8 +23,8 @@ def temp_data():
     obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
     forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
 
-    obs.to_zarr(obs_path)
-    forecast.to_zarr(forecast_path)
+    obs.to_zarr(obs_path, mode="w")
+    forecast.to_zarr(forecast_path, mode="w")
 
     yield
 
@@ -38,4 +39,4 @@ def test_evaluate_wb2(temp_data):
     obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
     forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
 
-    evaluate_wb2(obs_path, forecast_path)
+    evaluate_wb2(obs_path, forecast_path, output_dir=output_data_path)
