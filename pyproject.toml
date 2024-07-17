@@ -35,4 +35,9 @@ dependencies = [
     "netCDF4",
     "zarr",
     "pre-commit",
+    "pyprojroot",
+    "pytest",
+    "pytest-dependency",
+    "weatherbench2@git+https://github.com/google-research/weatherbench2",
+    "gcsfs",
 ]
