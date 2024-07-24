@@ -116,58 +116,68 @@ def reshape_data2dmd_delme(X, t, time_delay=2, isKeepFirstTimes=True):
     return X_delayed, t_delayed, X.shape
 
 
-def train_dmd(X_delayed, t_delayed, rank=3):
+def train_dmd(X_delayed, 
+              t_delayed, 
+              svd_rank=3, 
+              eig_constraints={
+                        "stable", # choose Re(lambda)<0
+                        "conjugate_pairs", # force complex conjugate pairs
+                        },
+              **dmd_kwargs, 
+                ):
     """
-
-    Train dmd on snapshots X of time-delayed flattened square 2D data and times t.
-
-    Input:
-        X - (time_delay*ny*nx, N_time-time_delay+1): array of
+    Train dmd on snapshots X of time-delayed flattened square 2D data and times t. 
+    
+    Parameters: 
+        X - (time_delay*ny*nx, N_time-time_delay+1): array of 
             snapshots corresponding to t time points
         t - (N_time, ) array of time points
-        nxny = (nx, ny) tuple of mesh sizes for reshape.
-            Note: for array of shape (a, b), nx = b, ny = a
-        rank - dmd rank
-
-    Returns:
+        eig_constraints - constraints on eigenvalues -- see BOPDMD doc
+        
+    
+    Returns: 
     The DMD fit parameters
         Lambda (rank, )
-        Psi of shape (time_delay*ny*nx, rank)
+        Psi of shape (time_delay*ny*nx, rank) 
         bn (rank, )
-
-
-    Note:
-    1. must perform manual time delay, because must call
+     
+        
+    Note: 
+    1. must perform manual time delay, because must call 
           during bagging on time-delayed data
 
     2. Workflow
-
-    # X0 is data of shape (N_time, ny, nx)
-
-    # prepare time delay and reshape data as dmd input
-    X_delayed, t_delayed, data_shape = reshape_data2dmd(X0, t, time_delay = 2,
+    
+    # X0 is time series of images of shape (N_time, ny, nx)
+    
+    # prepare time delay and reshape data as dmd input 
+    X_delayed, t_delayed, data_shape = reshape_data2dmd(X0, t, time_delay = 2, 
             isKeepFirstTimes = True)
-
+    
     # train dmd - here can train dmd with bagging by bootstrap over X_delayed!
     Lambda, Psi_, bn = train_dmd_(X_delayed, t_delayed, rank = 3)
-
+    
     # convert modes to same shape as data
     Psi = reshape_dmd2data(Psi_, data_shape)
 
     """
 
+
     # DMD OBJECT
     optdmd = BOPDMD(
-        svd_rank=rank,
-        num_trials=0,  # for bagging
-        eig_constraints={
-            "stable",  # choose Re(lambda)<0
-            "conjugate_pairs",  # force complex conjugate pairs
-        },
-    )
+                    svd_rank=svd_rank, 
+                    num_trials=0, # for bagging
+                    eig_constraints=eig_constraints,
+                    **dmd_kwargs
+                                    )
 
+    
+    
     # fit dmd
     optdmd.fit(X_delayed, t_delayed)
+
+
+    
 
     # GET DMD MODES AND EIGS
     # Get modes, cutting out the time-delay
@@ -212,8 +222,7 @@ def bootstrap_train_dmd(N_boot_strap, X_delayed, t_delayed, rank=3):
 
     return L_s, Psi_s, bn_s
 
-
-def eval_dmd(Lambda, Psi, bn, t):
+def eval_dmd(Lambda, Psi, bn, t, isPositive = True):
     """
     Assemble DMD expansion from Lambda, Psi, bn and evaluate at t
     Take real part and set neagive values to zero
@@ -225,14 +234,13 @@ def eval_dmd(Lambda, Psi, bn, t):
         t - time at which to compute
     """
 
-    dmd_expansion = lambda t, Lambda, Psi, bn: (
-        Psi.T @ (bn[:, None] * np.exp(Lambda[:, None] * t))
-    ).T
+    dmd_expansion = lambda t, Lambda, Psi, bn: (Psi.T @ (bn[:,None]*np.exp(Lambda[:, None]*t))).T
 
     out = dmd_expansion(t, Lambda, Psi, bn).real
-    out[out < 0] = 0.0
+    if isPositive: out[out<0]=0.
 
     return out
+
 
 
 def eval_dmd_ensemble(L_s1, Psi_s1, bn_s1, T):
