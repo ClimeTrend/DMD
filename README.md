@@ -9,6 +9,18 @@ Here is an example of a fit to a synthetic data from a PDE. More details in `/No
 
 ## Install
 
+You will need to install (macOS) using brew:
+
+```bash
+brew install netcdf
+```
+
+and 
+
+```bash
+brew install hdf5
+```
+
 To install the dependencies from the pyproject.toml file, run the following commands (assuming macOS) to create a virtual environment and install the package dependencies in editable mode:
 
 For venv users:
