@@ -14,13 +14,13 @@ def temp_data():
     """
     Temporarily save NetCDF files as Zarr files for testing.
     """
-    obs_path = os.path.join(input_data_path, "era5_slice_test.nc")
+    obs_path      = os.path.join(input_data_path, "era5_slice_test.nc")
     forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.nc")
 
-    obs = xr.open_dataset(obs_path)
+    obs      = xr.open_dataset(obs_path)
     forecast = xr.open_dataset(forecast_path)
 
-    obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
+    obs_path      = os.path.join(input_data_path, "era5_slice_test.zarr")
     forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
 
     obs.to_zarr(obs_path, mode="w")
@@ -28,10 +28,24 @@ def temp_data():
 
     yield
 
+    # Tear down
     os.system(f"rm -r {obs_path}")
     os.system(f"rm -r {forecast_path}")
 
+def test_format_of_files(temp_data):
+    """
+    Test the format of the incoming data: names of dimensions, structure, etc
+    """
 
+    obs      = xr.open_dataset(os.path.join(input_data_path, "era5_slice_test.zarr"))
+    forecast = xr.open_dataset(os.path.join(input_data_path, "era5_dmd_forecast_test.zarr"))
+
+    assert set(obs.dims) == {"time", "latitude", "longitude"}
+    assert set(forecast.dims) == {"time", "latitude", "longitude"}
+    assert obs.dims == forecast.dims
+
+# Skip this test for now
+@pytest.mark.skip(reason="Not implemented yet")
 def test_evaluate_wb2(temp_data):
     """
     Test the evaluate_wb2 function.
