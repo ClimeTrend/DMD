@@ -17,8 +17,8 @@ from WeatherDMD.constants import (
     wb2_obs_dimensions,
 )
 
-input_data_path = os.path.join(here(), "tests/evaluate_wb2/data/input")
-output_data_path = os.path.join(here(), "tests/evaluate_wb2/data/output")
+INPUT_DATA_PATH = os.path.join(here(), "tests/evaluate_wb2/data/input")
+OUTPUT_DATA_PATH = os.path.join(here(), "tests/evaluate_wb2/data/output")
 
 
 @pytest.fixture(scope="module")
@@ -26,14 +26,14 @@ def temp_input_data():
     """
     Temporarily save NetCDF files as Zarr files for testing.
     """
-    obs_path = os.path.join(input_data_path, "era5_slice_test.nc")
-    forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.nc")
+    obs_path = os.path.join(INPUT_DATA_PATH, "era5_slice_test.nc")
+    forecast_path = os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.nc")
 
     obs = xr.open_dataset(obs_path)
     forecast = xr.open_dataset(forecast_path)
 
-    obs_path_zarr = os.path.join(input_data_path, "era5_slice_test.zarr")
-    forecast_path_zarr = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
+    obs_path_zarr = os.path.join(INPUT_DATA_PATH, "era5_slice_test.zarr")
+    forecast_path_zarr = os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.zarr")
 
     obs.to_zarr(obs_path_zarr, mode="w")
     forecast.to_zarr(forecast_path_zarr, mode="w")
@@ -49,9 +49,9 @@ def test_set_up_data_config(temp_input_data):
     """
     Test the _set_up_data_config function.
     """
-    obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
-    forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
-    output_dir = output_data_path
+    obs_path = os.path.join(INPUT_DATA_PATH, "era5_slice_test.zarr")
+    forecast_path = os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.zarr")
+    output_dir = OUTPUT_DATA_PATH
     variables = ["temperature", "pressure"]
     levels = [1000, 850]
     start_date = "2020-01-01"
@@ -139,19 +139,19 @@ def temp_output_data(temp_input_data):
     So it can be compared to golden output
     """
 
-    obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
-    forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
+    obs_path = os.path.join(INPUT_DATA_PATH, "era5_slice_test.zarr")
+    forecast_path = os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.zarr")
 
-    evaluate_wb2(obs_path, forecast_path, output_dir=output_data_path)
+    evaluate_wb2(obs_path, forecast_path, output_dir=OUTPUT_DATA_PATH)
 
     yield
 
     # Tear down
     os.system(
-        f"rm -r {os.path.join(output_data_path, 'era5_dmd_forecast_test_spatial.nc')}"
+        f"rm -r {os.path.join(OUTPUT_DATA_PATH, 'era5_dmd_forecast_test_spatial.nc')}"
     )
     os.system(
-        f"rm -r {os.path.join(output_data_path, 'era5_dmd_forecast_test_non_spatial.nc')}"
+        f"rm -r {os.path.join(OUTPUT_DATA_PATH, 'era5_dmd_forecast_test_non_spatial.nc')}"
     )
 
 
@@ -161,10 +161,10 @@ def test_format_of_input_files(temp_input_data):
     """
 
     obs = xr.open_dataset(
-        os.path.join(input_data_path, "era5_slice_test.zarr"), engine="zarr"
+        os.path.join(INPUT_DATA_PATH, "era5_slice_test.zarr"), engine="zarr"
     )
     forecast = xr.open_dataset(
-        os.path.join(input_data_path, "era5_dmd_forecast_test.zarr"), engine="zarr"
+        os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.zarr"), engine="zarr"
     )
 
     # Check that obs and forecast variables are members of a list of accepted variables
@@ -228,7 +228,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the golden output _non_spatial
     golden_output_path_non_spatial = os.path.join(
-        input_data_path, "golden_output_era5_dmd_forecast_test_non_spatial.nc"
+        INPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_non_spatial.nc"
     )
     golden_output_non_spatial = xr.open_dataset(
         golden_output_path_non_spatial, engine="netcdf4"
@@ -236,7 +236,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the current output _non_spatial
     current_output_path_non_spatial = os.path.join(
-        output_data_path, "era5_dmd_forecast_test_non_spatial.nc"
+        OUTPUT_DATA_PATH, "era5_dmd_forecast_test_non_spatial.nc"
     )
     current_output_non_spatial = xr.open_dataset(
         current_output_path_non_spatial, engine="netcdf4"
@@ -249,7 +249,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the golden output _non_spatial
     golden_output_path_spatial = os.path.join(
-        input_data_path, "golden_output_era5_dmd_forecast_test_spatial.nc"
+        INPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_spatial.nc"
     )
     golden_output_spatial = xr.open_dataset(
         golden_output_path_spatial, engine="netcdf4"
@@ -257,7 +257,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the current output _non_spatial
     current_output_path_spatial = os.path.join(
-        output_data_path, "era5_dmd_forecast_test_spatial.nc"
+        OUTPUT_DATA_PATH, "era5_dmd_forecast_test_spatial.nc"
     )
     current_output_spatial = xr.open_dataset(
         current_output_path_spatial, engine="netcdf4"
@@ -277,11 +277,11 @@ def test_format_of_output_files(temp_output_data):
     """
 
     output_non_spatial = xr.open_dataset(
-        os.path.join(output_data_path, "era5_dmd_forecast_test_non_spatial.nc"),
+        os.path.join(OUTPUT_DATA_PATH, "era5_dmd_forecast_test_non_spatial.nc"),
         engine="netcdf4",
     )
     output_spatial = xr.open_dataset(
-        os.path.join(output_data_path, "era5_dmd_forecast_test_spatial.nc"),
+        os.path.join(OUTPUT_DATA_PATH, "era5_dmd_forecast_test_spatial.nc"),
         engine="netcdf4",
     )
 
@@ -342,13 +342,14 @@ def test_format_of_output_files(temp_output_data):
     assert output_spatial.longitude.dtype == "float32"
 
 
-# Skip this test for now
-@pytest.mark.skip(reason="Not implemented yet")
 def test_evaluate_wb2(temp_input_data):
     """
-    Test the evaluate_wb2 function.
+    Test the that the evaluate_wb2 function runs at all.
     """
-    obs_path = os.path.join(input_data_path, "era5_slice_test.zarr")
-    forecast_path = os.path.join(input_data_path, "era5_dmd_forecast_test.zarr")
+    obs_path = os.path.join(INPUT_DATA_PATH, "era5_slice_test.zarr")
+    forecast_path = os.path.join(INPUT_DATA_PATH, "era5_dmd_forecast_test.zarr")
 
-    evaluate_wb2(obs_path, forecast_path, output_dir=output_data_path)
+    try:
+        evaluate_wb2(obs_path, forecast_path, output_dir=OUTPUT_DATA_PATH)
+    except Exception as e:
+        pytest.fail(f"evaluate_wb2 function did not run and raised an exception: {e}")
