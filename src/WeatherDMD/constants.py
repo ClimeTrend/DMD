@@ -10,6 +10,12 @@ wb2_variables = [
     "specific_humidity",
 ]
 
-wb2_obs_dimensions = ["time", "latitude", "longitude","level"]
+wb2_obs_dimensions = ["time", "latitude", "longitude", "level"]
 
-wb2_forecast_dimensions = ["time", "latitude", "longitude", "level","prediction_timedelta"]
+wb2_forecast_dimensions = [
+    "time",
+    "latitude",
+    "longitude",
+    "level",
+    "prediction_timedelta",
+]
