@@ -228,7 +228,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the golden output _non_spatial
     golden_output_path_non_spatial = os.path.join(
-        INPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_non_spatial.nc"
+        OUTPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_non_spatial.nc"
     )
     golden_output_non_spatial = xr.open_dataset(
         golden_output_path_non_spatial, engine="netcdf4"
@@ -249,7 +249,7 @@ def test_output_against_golden_output(temp_output_data):
 
     # Load the golden output _non_spatial
     golden_output_path_spatial = os.path.join(
-        INPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_spatial.nc"
+        OUTPUT_DATA_PATH, "golden_output_era5_dmd_forecast_test_spatial.nc"
     )
     golden_output_spatial = xr.open_dataset(
         golden_output_path_spatial, engine="netcdf4"
